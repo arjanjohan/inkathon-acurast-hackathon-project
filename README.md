@@ -22,6 +22,6 @@ This project is applying for the following bounty categories:
 
 ## Our Contributors ✨
 
-<a href="">
+<a href="https://twitter.com/arjanjohan/">
   <img src="https://contrib.rocks/image?repo=arjanjohan/arjanjohan" />
 </a>
