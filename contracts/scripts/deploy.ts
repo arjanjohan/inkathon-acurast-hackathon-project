@@ -18,14 +18,18 @@ const main = async () => {
   const initParams = await initPolkadotJs()
   const { api, chain, account } = initParams
 
-  // Deploy greeter contract
-  const { abi, wasm } = await getDeploymentData('greeter')
-  const greeter = await deployContract(api, account, abi, wasm, 'default', [])
+  const contracts = ['greeter', 'oracle', 'receiver']
 
-  // Write contract addresses to `{contract}/{network}.ts` file(s)
-  await writeContractAddresses(chain.network, {
-    greeter,
-  })
+  for (const contract of contracts) {
+    // Deploy contract
+    const { abi, wasm } = await getDeploymentData(contract)
+    const address = await deployContract(api, account, abi, wasm, 'default', [])
+
+    // Write contract address to `{contract}/{network}.ts` file
+    await writeContractAddresses(chain.network, {
+      [contract]: address,
+    })
+  }
 }
 
 main()

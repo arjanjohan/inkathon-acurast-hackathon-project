@@ -9,6 +9,7 @@ import { HomePageTitle } from '@/app/components/home-page-title'
 import { ChainInfo } from '@/components/web3/chain-info'
 import { ConnectButton } from '@/components/web3/connect-button'
 import { GreeterContractInteractions } from '@/components/web3/greeter-contract-interactions'
+import { ReceiverContractInteractions } from '@/components/web3/receiver-contract-interactions'
 
 export default function HomePage() {
   // Display `useInkathon` error messages (optional)
@@ -33,6 +34,8 @@ export default function HomePage() {
 
           {/* Greeter Read/Write Contract Interactions */}
           <GreeterContractInteractions />
+          {/* Receiver Read/Write Contract Interactions */}
+          <ReceiverContractInteractions />
         </div>
       </div>
     </>

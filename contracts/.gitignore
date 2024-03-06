@@ -1,5 +1,9 @@
 ### Rust ###
 
+# Why wasn't this in gitignore by default?
+typed-contracts/
+deployments/
+
 # Ignore build artifacts from the local tests sub-crate.
 target/
 debug/
