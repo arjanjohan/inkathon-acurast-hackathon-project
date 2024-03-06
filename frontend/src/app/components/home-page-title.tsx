@@ -3,8 +3,7 @@ import Link from 'next/link'
 import { AnchorHTMLAttributes, FC } from 'react'
 
 import githubIcon from 'public/icons/github-button.svg'
-import telegramIcon from 'public/icons/telegram-button.svg'
-import vercelIcon from 'public/icons/vercel-button.svg'
+import acurastLogo from 'public/images/acurast-logo.png'
 import inkathonLogo from 'public/images/inkathon-logo.png'
 
 import { cn } from '@/utils/cn'
@@ -27,11 +26,9 @@ const StyledIconLink: React.FC<StyledIconLinkProps> = ({ className, children, ..
 )
 
 export const HomePageTitle: FC = () => {
-  const title = 'ink!athon'
-  const desc = 'Full-Stack DApp Boilerplate for ink! Smart Contracts'
-  const githubHref = 'https://github.com/scio-labs/inkathon'
-  const deployHref = 'https://github.com/scio-labs/inkathon#deployment-'
-  const telegramHref = 'https://t.me/inkathon'
+  const title = 'Acurast ink!athon dApp'
+  const desc = 'Full-Stack DApp integrating Acurast in ink!athon'
+  const githubHref = 'https://github.com/arjanjohan/inkathon-acurast-hackathon-project'
 
   return (
     <>
@@ -43,8 +40,9 @@ export const HomePageTitle: FC = () => {
           // className="group"
           className="group flex cursor-pointer items-center gap-4 rounded-3xl px-3.5 py-1.5 transition-all hover:bg-gray-900"
         >
-          <Image src={inkathonLogo} priority width={60} alt="ink!athon Logo" />
+          <Image src={acurastLogo} priority width={60} alt="Acurast Logo" />
           <h1 className="text-[2.5rem] font-black tracking-tighter">{title}</h1>
+          <Image src={inkathonLogo} priority width={60} alt="ink!athon Logo" />
         </Link>
 
         {/* Tagline & Lincks */}
@@ -52,28 +50,12 @@ export const HomePageTitle: FC = () => {
         <p className="mb-8 text-xs text-gray-600">
           Built by{' '}
           <a
-            href="https://zoma.dev"
+            href="https://twitter.com/arjanjohan/"
             target="_blank"
             className="font-semibold text-gray-600 hover:text-gray-300"
           >
-            Dennis Zoma
+            arjanjohan
           </a>{' '}
-          &{' '}
-          <a
-            href="https://scio.xyz"
-            target="_blank"
-            className="font-semibold text-gray-600 hover:text-gray-300"
-          >
-            Scio Labs
-          </a>
-          . Supported by{' '}
-          <a
-            href="https://alephzero.org"
-            target="_blank"
-            className="font-semibold text-gray-600 hover:text-gray-300"
-          >
-            Aleph Zero
-          </a>
           .
         </p>
 
@@ -81,12 +63,6 @@ export const HomePageTitle: FC = () => {
         <div className="flex select-none space-x-2">
           <StyledIconLink href={githubHref} target="_blank">
             <Image src={githubIcon} priority height={32} alt="Github Repository" />
-          </StyledIconLink>
-          <StyledIconLink href={deployHref} target="_blank">
-            <Image src={vercelIcon} priority height={32} alt="Deploy with Vercel" />
-          </StyledIconLink>
-          <StyledIconLink href={telegramHref} target="_blank">
-            <Image src={telegramIcon} priority height={32} alt="Telegram Group" />
           </StyledIconLink>
         </div>
 

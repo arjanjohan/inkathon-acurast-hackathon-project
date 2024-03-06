@@ -19,15 +19,15 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'ink!athon Boilerplate',
-  description: 'Full-Stack DApp Boilerplate for ink! Smart Contracts',
+  title: 'Acurast ink!athon dApp',
+  description: 'Full-Stack DApp integrating Acurast in ink!athon',
   metadataBase: new URL(env.url),
   robots: env.isProduction ? 'all' : 'noindex,nofollow',
   openGraph: {
     type: 'website',
     locale: 'en',
     url: env.url,
-    siteName: 'ink!athon Boilerplate',
+    siteName: 'Acurast ink!athon dApp',
     images: [
       {
         url: '/images/inkathon-og-banner.jpg',

@@ -29,7 +29,7 @@ export const ReceiverContractInteractions: FC = () => {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract, address: contractAddress } = useRegisteredContract(ContractIds.Greeter)
   const { typedContract } = useRegisteredTypedContract(ContractIds.Greeter, ReceiverContract)
-  const [randomBytes, setRandomBytes] = useState<string>()
+  const [randomOutcome, setRandomOutcome] = useState<string>()
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,26 +37,26 @@ export const ReceiverContractInteractions: FC = () => {
 
   const { register, reset, handleSubmit } = form
 
-  // Fetch Greeting
-  const fetchRandomBytes = async () => {
+  // Fetch Randomness
+  const fetchOutcome = async () => {
     if (!contract || !typedContract || !api) return
 
     setFetchIsLoading(true)
     try {
-      const result = await contractQuery(api, '', contract, 'get_bytes')
-      const { output, isError, decodedOutput } = decodeOutput(result, contract, 'get_bytes')
+      const result = await contractQuery(api, '', contract, 'get')
+      const { output, isError, decodedOutput } = decodeOutput(result, contract, 'get')
       if (isError) throw new Error(decodedOutput)
-      setRandomBytes(output)
+      setRandomOutcome(output)
     } catch (e) {
       console.error(e)
       toast.error('Error while fetching bytes. Try again…')
-      setRandomBytes(undefined)
+      setRandomOutcome(undefined)
     } finally {
       setFetchIsLoading(false)
     }
   }
   useEffect(() => {
-    fetchRandomBytes()
+    fetchOutcome()
   }, [typedContract])
 
   // Update Greeting
@@ -74,7 +74,7 @@ export const ReceiverContractInteractions: FC = () => {
     } catch (e) {
       console.error(e)
     } finally {
-      fetchRandomBytes()
+      fetchOutcome()
     }
   }
 
@@ -90,10 +90,10 @@ export const ReceiverContractInteractions: FC = () => {
           <Card>
             <CardContent className="pt-6">
               <FormItem>
-                <FormLabel className="text-base">Random Bytes</FormLabel>
+                <FormLabel className="text-base">Random outcome</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder={fetchIsLoading || !contract ? 'Loading…' : randomBytes}
+                    placeholder={fetchIsLoading || !contract ? 'Loading…' : randomOutcome}
                     disabled={true}
                   />
                 </FormControl>
