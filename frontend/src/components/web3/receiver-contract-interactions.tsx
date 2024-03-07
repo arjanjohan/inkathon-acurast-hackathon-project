@@ -16,20 +16,21 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import * as z from 'zod'
 
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Form, FormControl, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 const formSchema = z.object({
-  newMessage: z.string().min(1).max(90),
+  newMessage: z.string().min(0).max(90),
 })
 
 export const ReceiverContractInteractions: FC = () => {
   const { api, activeAccount, activeSigner } = useInkathon()
-  const { contract, address: contractAddress } = useRegisteredContract(ContractIds.Greeter)
-  const { typedContract } = useRegisteredTypedContract(ContractIds.Greeter, ReceiverContract)
-  const [randomOutcome, setRandomOutcome] = useState<string>()
+  const { contract, address: contractAddress } = useRegisteredContract(ContractIds.Receiver)
+  const { typedContract } = useRegisteredTypedContract(ContractIds.Receiver, ReceiverContract)
+  const [randomOutcome, setRandomOutcome] = useState<boolean>()
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,17 +60,15 @@ export const ReceiverContractInteractions: FC = () => {
     fetchOutcome()
   }, [typedContract])
 
-  // Update Greeting
-  const updateGreeting: SubmitHandler<z.infer<typeof formSchema>> = async ({ newMessage }) => {
+  // Execute coinflip
+  const flipCoin: SubmitHandler<z.infer<typeof formSchema>> = async ({ newMessage }) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       toast.error('Wallet not connected. Try again…')
       return
     }
 
     try {
-      await contractTxWithToast(api, activeAccount.address, contract, 'setMessage', {}, [
-        newMessage,
-      ])
+      await contractTxWithToast(api, activeAccount.address, contract, 'flip', {}, [])
       reset()
     } catch (e) {
       console.error(e)
@@ -93,26 +92,27 @@ export const ReceiverContractInteractions: FC = () => {
                 <FormLabel className="text-base">Random outcome</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder={fetchIsLoading || !contract ? 'Loading…' : randomOutcome}
+                    placeholder={
+                      fetchIsLoading || !contract
+                        ? 'Loading…'
+                        : randomOutcome == true
+                          ? 'Heads'
+                          : 'Tails'
+                    }
                     disabled={true}
                   />
                 </FormControl>
               </FormItem>
             </CardContent>
           </Card>
-
-          {/* Update Greeting
+          Flip coin
           <Card>
             <CardContent className="pt-6">
-              <form
-                onSubmit={handleSubmit(updateGreeting)}
-                className="flex flex-col justify-end gap-2"
-              >
+              <form onSubmit={handleSubmit(flipCoin)} className="flex flex-col justify-end gap-2">
                 <FormItem>
-                  <FormLabel className="text-base">Update Greeting</FormLabel>
+                  <FormLabel className="text-base">Flip the coin</FormLabel>
                   <FormControl>
                     <div className="flex gap-2">
-                      <Input disabled={form.formState.isSubmitting} {...register('newMessage')} />
                       <Button
                         type="submit"
                         className="bg-primary font-bold"
@@ -126,7 +126,7 @@ export const ReceiverContractInteractions: FC = () => {
                 </FormItem>
               </form>
             </CardContent>
-          </Card> */}
+          </Card>
         </Form>
 
         {/* Contract Address */}

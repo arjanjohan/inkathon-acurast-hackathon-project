@@ -15,13 +15,24 @@ This project is applying for the following bounty categories:
 - No-code Oracle onboarding experience
 - Best application leveraging Acurast’s compute
 
+## Next steps
+
+This project is still in development, and new features will be added in the future:
+
+- Generate script based on user input
+- User select interval or on-demand
+- Create Acurast job (using above inputs)
+- Deployment of contract via frontend
+- Pop-up to send transaction fees to Processor (not needed for Acurast Level 2)
+-
+
 ## Links
 
 - [Video demo]()
 - [Vercel deployment]()
 
-## Our Contributors ✨
+## Team
 
-<a href="https://twitter.com/arjanjohan/">
-  <img src="https://contrib.rocks/image?repo=arjanjohan/arjanjohan" />
-</a>
+This project was build during Encode X Polkadot hackathon 2024 by:
+
+- [arjanjohan](https://x.com/arjanjohan/)

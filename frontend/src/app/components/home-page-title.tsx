@@ -56,7 +56,7 @@ export const HomePageTitle: FC = () => {
           >
             arjanjohan
           </a>{' '}
-          .
+          for Encode x Polkadot Hackathon 2024.
         </p>
 
         {/* Github & Vercel Buttons */}

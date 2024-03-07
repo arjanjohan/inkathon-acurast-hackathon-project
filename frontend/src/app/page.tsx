@@ -6,9 +6,9 @@ import { useInkathon } from '@scio-labs/use-inkathon'
 import { toast } from 'react-hot-toast'
 
 import { HomePageTitle } from '@/app/components/home-page-title'
-import { ChainInfo } from '@/components/web3/chain-info'
 import { ConnectButton } from '@/components/web3/connect-button'
-import { GreeterContractInteractions } from '@/components/web3/greeter-contract-interactions'
+import { OracleAllowlistContractInteractions } from '@/components/web3/oracle-allowlist-contract-interactions'
+import { OracleGetContractInteractions } from '@/components/web3/oracle-get-contract-interactions'
 import { ReceiverContractInteractions } from '@/components/web3/receiver-contract-interactions'
 
 export default function HomePage() {
@@ -30,12 +30,14 @@ export default function HomePage() {
 
         <div className="mt-12 flex w-full flex-wrap items-start justify-center gap-4">
           {/* Chain Metadata Information */}
-          <ChainInfo />
+          {/* <ChainInfo /> */}
 
-          {/* Greeter Read/Write Contract Interactions */}
-          <GreeterContractInteractions />
           {/* Receiver Read/Write Contract Interactions */}
           <ReceiverContractInteractions />
+          {/* Oracle Get Interactions */}
+          <OracleGetContractInteractions />
+          {/* Oracle Allowlist Read/Write Contract Interactions */}
+          <OracleAllowlistContractInteractions />
         </div>
       </div>
     </>
