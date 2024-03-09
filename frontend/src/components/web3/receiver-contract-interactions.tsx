@@ -3,77 +3,58 @@
 import { FC, useEffect, useState } from 'react'
 
 import { ContractIds } from '@/deployments/deployments'
-import { zodResolver } from '@hookform/resolvers/zod'
-import ReceiverContract from '@inkathon/contracts/typed-contracts/contracts/receiver'
 import {
   contractQuery,
   decodeOutput,
   useInkathon,
   useRegisteredContract,
-  useRegisteredTypedContract,
 } from '@scio-labs/use-inkathon'
-import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import * as z from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Form, FormControl, FormItem, FormLabel } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
-
-const formSchema = z.object({
-  newMessage: z.string().min(0).max(90),
-})
 
 export const ReceiverContractInteractions: FC = () => {
   const { api, activeAccount, activeSigner } = useInkathon()
-  const { contract, address: contractAddress } = useRegisteredContract(ContractIds.Receiver)
-  const { typedContract } = useRegisteredTypedContract(ContractIds.Receiver, ReceiverContract)
+  const { contract } = useRegisteredContract(ContractIds.Receiver)
   const [randomOutcome, setRandomOutcome] = useState<boolean>()
-  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>()
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  })
+  const [isFlipping, setIsFlipping] = useState<boolean>(false)
 
-  const { register, reset, handleSubmit } = form
-
-  // Fetch Randomness
   const fetchOutcome = async () => {
-    if (!contract || !typedContract || !api) return
+    if (!contract || !api) return
 
-    setFetchIsLoading(true)
     try {
       const result = await contractQuery(api, '', contract, 'get')
       const { output, isError, decodedOutput } = decodeOutput(result, contract, 'get')
       if (isError) throw new Error(decodedOutput)
       setRandomOutcome(output)
+      setIsFlipping(false) // Stop spinning once the result is fetched
     } catch (e) {
       console.error(e)
       toast.error('Error while fetching bytes. Try again…')
-      setRandomOutcome(undefined)
-    } finally {
-      setFetchIsLoading(false)
+      setIsFlipping(false) // Stop spinning in case of an error
     }
   }
+
   useEffect(() => {
     fetchOutcome()
-  }, [typedContract])
+  }, [contract])
 
-  // Execute coinflip
-  const flipCoin: SubmitHandler<z.infer<typeof formSchema>> = async ({ newMessage }) => {
+  const flipCoin = async () => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       toast.error('Wallet not connected. Try again…')
       return
     }
 
+    setIsFlipping(true) // Start spinning when button is clicked
+
     try {
       await contractTxWithToast(api, activeAccount.address, contract, 'flip', {}, [])
-      reset()
+      fetchOutcome() // Fetch the outcome after the transaction is complete
     } catch (e) {
       console.error(e)
-    } finally {
-      fetchOutcome()
+      setIsFlipping(false) // Stop spinning in case of an error
     }
   }
 
@@ -84,54 +65,20 @@ export const ReceiverContractInteractions: FC = () => {
       <div className="flex max-w-[22rem] grow flex-col gap-4">
         <h2 className="text-center font-mono text-gray-400">Acurast Randomness</h2>
 
-        <Form {...form}>
-          {/* Fetched Greeting */}
-          <Card>
-            <CardContent className="pt-6">
-              <FormItem>
-                <FormLabel className="text-base">Random outcome</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={
-                      fetchIsLoading || !contract
-                        ? 'Loading…'
-                        : randomOutcome == true
-                          ? 'Heads'
-                          : 'Tails'
-                    }
-                    disabled={true}
-                  />
-                </FormControl>
-              </FormItem>
-            </CardContent>
-          </Card>
-          Flip coin
-          <Card>
-            <CardContent className="pt-6">
-              <form onSubmit={handleSubmit(flipCoin)} className="flex flex-col justify-end gap-2">
-                <FormItem>
-                  <FormLabel className="text-base">Flip the coin</FormLabel>
-                  <FormControl>
-                    <div className="flex gap-2">
-                      <Button
-                        type="submit"
-                        className="bg-primary font-bold"
-                        disabled={fetchIsLoading || form.formState.isSubmitting}
-                        isLoading={form.formState.isSubmitting}
-                      >
-                        Submit
-                      </Button>
-                    </div>
-                  </FormControl>
-                </FormItem>
-              </form>
-            </CardContent>
-          </Card>
-        </Form>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-base">
+              Random outcome:{' '}
+              {randomOutcome !== undefined ? (randomOutcome ? 'Heads' : 'Tails') : 'Loading…'}
+            </p>
+          </CardContent>
+        </Card>
+        <Button onClick={flipCoin} className="bg-primary font-bold" disabled={isFlipping}>
+          Flip Coin
+        </Button>
 
-        {/* Contract Address */}
         <p className="text-center font-mono text-xs text-gray-600">
-          {contract ? contractAddress : 'Loading…'}
+          {contract ? contract.address : 'Loading…'}
         </p>
       </div>
     </>

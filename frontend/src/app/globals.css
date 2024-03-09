@@ -78,3 +78,51 @@
     @apply flex h-screen min-h-screen flex-col;
   }
 }
+
+@keyframes spin {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes landHeads {
+  from {
+    transform: rotateY(1980deg);
+  }
+  to {
+    transform: rotateY(3600deg);
+  }
+}
+
+@keyframes landTails {
+  from {
+    transform: rotateY(1980deg);
+  }
+  to {
+    transform: rotateY(3780deg);
+  }
+}
+
+.coin {
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+}
+
+.coin.spin {
+  animation-name: spin;
+}
+
+.coin.landHeads {
+  animation-name: landHeads;
+  animation-iteration-count: 1;
+}
+
+.coin.landTails {
+  animation-name: landTails;
+  animation-iteration-count: 1;
+}
