@@ -4,12 +4,8 @@ import { FC, useState } from 'react'
 
 import { ContractIds } from '@/deployments/deployments'
 import { zodResolver } from '@hookform/resolvers/zod'
-import OracleContract from '@inkathon/contracts/typed-contracts/contracts/oracle'
-import {
-  useInkathon,
-  useRegisteredContract,
-  useRegisteredTypedContract,
-} from '@scio-labs/use-inkathon'
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto'
+import { useInkathon, useRegisteredContract } from '@scio-labs/use-inkathon'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import * as z from 'zod'
@@ -27,7 +23,7 @@ const formSchema = z.object({
 export const OracleAllowlistContractInteractions: FC = () => {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract, address: contractAddress } = useRegisteredContract(ContractIds.Oracle)
-  const { typedContract } = useRegisteredTypedContract(ContractIds.Oracle, OracleContract)
+  const [statusMessage, setStatusMessage] = useState<string | null>(null)
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -36,25 +32,48 @@ export const OracleAllowlistContractInteractions: FC = () => {
 
   const { register, reset, handleSubmit } = form
 
-  // Allowlist add
+  const isValidAZeroAddress = (address: string) => {
+    try {
+      const decodedAddress = decodeAddress(address)
+      const encodedAddress = encodeAddress(decodedAddress)
+      return address === encodedAddress
+    } catch (error) {
+      return false
+    }
+  }
+
+  const formatAddress = (address: string) => {
+    return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`
+  }
+
   const allow: SubmitHandler<z.infer<typeof formSchema>> = async ({ walletAddress }) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       toast.error('Wallet not connected. Try again…')
       return
     }
 
+    if (!isValidAZeroAddress(walletAddress)) {
+      toast.error('Invalid Aleph Zero address. Please check the input and try again.')
+      return
+    }
+
     try {
       await contractTxWithToast(api, activeAccount.address, contract, 'allow', {}, [walletAddress])
+      setStatusMessage(`Address ${formatAddress(walletAddress)} is now APPROVED!`)
       reset()
     } catch (e) {
       console.error(e)
     }
   }
 
-  // Update Greeting
   const disallow: SubmitHandler<z.infer<typeof formSchema>> = async ({ walletAddress }) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    if (!isValidAZeroAddress(walletAddress)) {
+      toast.error('Invalid Aleph Zero address. Please check the input and try again.')
       return
     }
 
@@ -62,6 +81,7 @@ export const OracleAllowlistContractInteractions: FC = () => {
       await contractTxWithToast(api, activeAccount.address, contract, 'disallow', {}, [
         walletAddress,
       ])
+      setStatusMessage(`Address ${formatAddress(walletAddress)} is now BANNED!`)
       reset()
     } catch (e) {
       console.error(e)
@@ -84,7 +104,7 @@ export const OracleAllowlistContractInteractions: FC = () => {
                   <FormLabel className="text-base">Wallet Address</FormLabel>
                   <FormControl>
                     <Input
-                      className="w-full" // Ensure the input takes the full width
+                      className="w-full"
                       disabled={form.formState.isSubmitting}
                       {...register('walletAddress')}
                     />
@@ -92,8 +112,6 @@ export const OracleAllowlistContractInteractions: FC = () => {
                 </FormItem>
                 <FormItem>
                   <div className="flex justify-center gap-2">
-                    {' '}
-                    {/* Center the buttons and space them out */}
                     <Button
                       type="button"
                       className="bg-primary font-bold"
@@ -113,6 +131,8 @@ export const OracleAllowlistContractInteractions: FC = () => {
                       Disallow
                     </Button>
                   </div>
+                  {/* Status Message Display */}
+                  {statusMessage && <p className="mt-4 text-center">{statusMessage}</p>}
                 </FormItem>
               </form>
             </CardContent>
