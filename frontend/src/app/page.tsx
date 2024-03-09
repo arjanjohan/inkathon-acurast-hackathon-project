@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast'
 import { HomePageTitle } from '@/app/components/home-page-title'
 import { ConnectButton } from '@/components/web3/connect-button'
 import { OracleAllowlistContractInteractions } from '@/components/web3/oracle-allowlist-contract-interactions'
+import { OracleGetContractInteractions } from '@/components/web3/oracle-get-contract-interactions'
 import { ReceiverContractInteractions } from '@/components/web3/receiver-contract-interactions'
 
 export default function HomePage() {
@@ -33,10 +34,10 @@ export default function HomePage() {
 
           {/* Receiver Read/Write Contract Interactions */}
           <ReceiverContractInteractions />
-          {/* Oracle Get Interactions */}
-          {/* <OracleGetContractInteractions /> */}
           {/* Oracle Allowlist Read/Write Contract Interactions */}
           <OracleAllowlistContractInteractions />
+          {/* Oracle Get Interactions */}
+          <OracleGetContractInteractions />
         </div>
       </div>
     </>
