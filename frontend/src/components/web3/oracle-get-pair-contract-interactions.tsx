@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 
+import { ContractIds } from '@/deployments/deployments'
+import { useRegisteredContract } from '@scio-labs/use-inkathon'
 import { useForm } from 'react-hook-form'
 import { FiChevronDown } from 'react-icons/fi'
 
@@ -17,6 +19,8 @@ import { pairOptions, sourceOptions } from '../ui/dropdown-options'
 
 export const OracleGetPairContractInteractions: FC = () => {
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false)
+  const { contract } = useRegisteredContract(ContractIds.Receiver)
+
   const [getValue, setGetValue] = useState<string | null>(null)
   const [sourceSelected, setSourceSelected] = useState<boolean>(false)
   const [pairSelected, setPairSelected] = useState<boolean>(false)
@@ -49,23 +53,19 @@ export const OracleGetPairContractInteractions: FC = () => {
       <h2 className="text-center font-mono text-gray-400">Fetch Value from Oracle</h2>
       <Form {...form}>
         <Card>
-          <CardContent>
-            <form onSubmit={handleSubmit(fetchValue)} className="flex flex-col gap-2">
-              <FormItem>
-                <FormLabel>Source</FormLabel>
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit(fetchValue)} className="flex flex-col gap-4">
+              {/* <div className="flex justify-between gap-4"> */}
+              <FormItem className="flex-1">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button
-                      className="h-12 min-w-[14rem] gap-2 rounded-2xl border border-white/10 bg-primary px-4 py-3 font-bold text-foreground transition-colors hover:bg-purple-600"
-                      disabled={fetchIsLoading}
-                      translate="no"
-                    >
+                    <Button disabled={fetchIsLoading} translate="no" className="w-full">
                       {sourceOptions.find((option) => option.value === watchSource)?.label ||
                         'Select Source'}
                       <FiChevronDown size={20} aria-hidden="true" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="min-w-[14rem] rounded-2xl bg-gray-900">
+                  <DropdownMenuContent className="rounded-2xl bg-gray-900">
                     {sourceOptions.map((option) => (
                       <DropdownMenuItem
                         key={option.value}
@@ -78,21 +78,16 @@ export const OracleGetPairContractInteractions: FC = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </FormItem>
-              <FormItem>
-                <FormLabel>Pair</FormLabel>
+              <FormItem className="flex-1">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button
-                      className="h-12 min-w-[14rem] gap-2 rounded-2xl border border-white/10 bg-primary px-4 py-3 font-bold text-foreground"
-                      disabled={fetchIsLoading}
-                      translate="no"
-                    >
+                    <Button disabled={fetchIsLoading} translate="no" className="w-full">
                       {pairOptions.find((option) => option.value === watchPair)?.label ||
                         'Select Pair'}
                       <FiChevronDown size={20} aria-hidden="true" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="min-w-[14rem] rounded-2xl bg-gray-900">
+                  <DropdownMenuContent className="rounded-2xl bg-gray-900">
                     {pairOptions.map((option) => (
                       <DropdownMenuItem
                         key={option.value}
@@ -105,23 +100,31 @@ export const OracleGetPairContractInteractions: FC = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </FormItem>
-              <FormItem>
-                <Button type="submit" disabled={fetchIsLoading}>
-                  Fetch Value
-                </Button>
-              </FormItem>
-              {getValue !== null && (
-                <FormItem>
-                  <FormLabel>Value</FormLabel>
-                  <FormControl>
-                    <input value={getValue} disabled={true} />
-                  </FormControl>
-                </FormItem>
-              )}
+              {/* </div> */}
             </form>
           </CardContent>
         </Card>
+        {/* Button outside the card */}
+        <Button
+          className="bg-primary font-bold"
+          type="submit"
+          onClick={handleSubmit(fetchValue)}
+          disabled={fetchIsLoading}
+        >
+          Get Value
+        </Button>
+        {getValue !== null && (
+          <FormItem>
+            <FormLabel>Value</FormLabel>
+            <FormControl>
+              <input value={getValue} disabled={true} />
+            </FormControl>
+          </FormItem>
+        )}
       </Form>
+      <p className="text-center font-mono text-xs text-gray-600">
+        {contract ? contract.address : 'Loading…'}
+      </p>
     </div>
   )
 }
