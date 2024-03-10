@@ -126,7 +126,11 @@ export const OracleGetPairContractInteractions: FC = () => {
         <Card>
           <CardContent className="pt-6">
             <FormItem>
-              <FormLabel className="text-base">Value for {currentPair}</FormLabel>
+              <FormLabel className="text-base">
+                {currentPair === ''
+                  ? 'Please select a pair and source'
+                  : `Value for ${currentPair}`}
+              </FormLabel>{' '}
               <FormControl className="form-control">
                 <Input
                   className="disabled-input-text"
