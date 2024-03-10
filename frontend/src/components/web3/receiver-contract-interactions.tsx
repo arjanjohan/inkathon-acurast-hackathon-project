@@ -17,7 +17,7 @@ import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 export const ReceiverContractInteractions: FC = () => {
   const { api, activeAccount, activeSigner } = useInkathon()
-  const { contract } = useRegisteredContract(ContractIds.Receiver)
+  const { contract, address: contractAddress } = useRegisteredContract(ContractIds.Receiver)
   const [randomOutcome, setRandomOutcome] = useState<boolean>()
   const [isFlipping, setIsFlipping] = useState<boolean>(false)
 
@@ -78,7 +78,7 @@ export const ReceiverContractInteractions: FC = () => {
         </Button>
 
         <p className="text-center font-mono text-xs text-gray-600">
-          {contract ? contract.address : 'Loading…'}
+          {contract ? contractAddress : 'Loading…'}
         </p>
       </div>
     </>

@@ -19,7 +19,7 @@ import { pairOptions, sourceOptions } from '../ui/dropdown-options'
 
 export const OracleGetPairContractInteractions: FC = () => {
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false)
-  const { contract } = useRegisteredContract(ContractIds.Receiver)
+  const { contract, address: contractAddress } = useRegisteredContract(ContractIds.Oracle)
 
   const [getValue, setGetValue] = useState<string | null>(null)
   const [sourceSelected, setSourceSelected] = useState<boolean>(false)
@@ -123,7 +123,7 @@ export const OracleGetPairContractInteractions: FC = () => {
         )}
       </Form>
       <p className="text-center font-mono text-xs text-gray-600">
-        {contract ? contract.address : 'Loading…'}
+        {contract ? contractAddress : 'Loading…'}
       </p>
     </div>
   )
