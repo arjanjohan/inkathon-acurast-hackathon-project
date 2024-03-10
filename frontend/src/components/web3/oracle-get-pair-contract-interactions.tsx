@@ -14,8 +14,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Form, FormControl, FormItem, FormLabel } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 
-import { pairOptions, sourceOptions } from '../ui/dropdown-options'
+import { pairOptions, pairPrice, sourceOptions } from '../ui/dropdown-options'
 
 export const OracleGetPairContractInteractions: FC = () => {
   const [fetchIsLoading, setFetchIsLoading] = useState<boolean>(false)
@@ -24,6 +25,7 @@ export const OracleGetPairContractInteractions: FC = () => {
   const [getValue, setGetValue] = useState<string | null>(null)
   const [sourceSelected, setSourceSelected] = useState<boolean>(false)
   const [pairSelected, setPairSelected] = useState<boolean>(false)
+  const [currentPair, setCurrentPair] = useState<string>('')
 
   const form = useForm({
     defaultValues: {
@@ -37,24 +39,30 @@ export const OracleGetPairContractInteractions: FC = () => {
   const watchSource = watch('source')
   const watchPair = watch('pair')
 
-  // Update selection status based on user choice
   useEffect(() => {
-    setSourceSelected(watchSource !== '')
-    setPairSelected(watchPair !== '')
-  }, [watchSource, watchPair])
+    form.setValue('pair', watchPair)
+  }, [watchPair, form])
 
-  const fetchValue = async () => {
-    // Your fetch logic here
-    setGetValue('Dummy Value') // Set to a dummy value for now
+  const fetchPrice = (selectedPairValue: string) => {
+    const pair = pairPrice.find((pair) => pair.label === selectedPairValue)
+    return pair ? pair.value : 'Price not found'
+  }
+
+  const handleFetchValue = async () => {
+    setFetchIsLoading(true)
+    const price = fetchPrice(watchPair)
+    setCurrentPair(watchPair) // Update the current pair label
+    setGetValue(price) // Update the fetched price
+    setFetchIsLoading(false)
   }
 
   return (
     <div className="flex max-w-[22rem] grow flex-col gap-4">
-      <h2 className="text-center font-mono text-gray-400">Fetch Value from Oracle</h2>
+      <h2 className="text-center font-mono text-gray-400">Oracle: Read</h2>
       <Form {...form}>
         <Card>
           <CardContent className="pt-6">
-            <form onSubmit={handleSubmit(fetchValue)} className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit(handleFetchValue)} className="flex flex-col gap-4">
               {/* <div className="flex justify-between gap-4"> */}
               <FormItem className="flex-1">
                 <DropdownMenu>
@@ -105,22 +113,30 @@ export const OracleGetPairContractInteractions: FC = () => {
           </CardContent>
         </Card>
         {/* Button outside the card */}
+
         <Button
           className="bg-primary font-bold"
           type="submit"
-          onClick={handleSubmit(fetchValue)}
-          disabled={fetchIsLoading}
+          onClick={handleSubmit(handleFetchValue)}
+          disabled={fetchIsLoading || !watchPair}
         >
           Get Value
         </Button>
-        {getValue !== null && (
-          <FormItem>
-            <FormLabel>Value</FormLabel>
-            <FormControl>
-              <input value={getValue} disabled={true} />
-            </FormControl>
-          </FormItem>
-        )}
+
+        <Card>
+          <CardContent className="pt-6">
+            <FormItem>
+              <FormLabel className="text-base">Value for {currentPair}</FormLabel>
+              <FormControl className="form-control">
+                <Input
+                  className="disabled-input-text"
+                  value={getValue ? getValue : ''}
+                  disabled={true}
+                />
+              </FormControl>
+            </FormItem>
+          </CardContent>
+        </Card>
       </Form>
       <p className="text-center font-mono text-xs text-gray-600">
         {contract ? contractAddress : 'Loading…'}

@@ -126,3 +126,8 @@
   animation-name: landTails;
   animation-iteration-count: 1;
 }
+
+.disabled-input-text:disabled {
+  color: #ffffff !important; /* 100% white */
+  opacity: 1 !important; /* Full opacity */
+}

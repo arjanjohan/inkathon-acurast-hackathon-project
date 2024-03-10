@@ -93,7 +93,7 @@ export const OracleAllowlistContractInteractions: FC = () => {
   return (
     <>
       <div className="flex max-w-[22rem] grow flex-col gap-4">
-        <h2 className="text-center font-mono text-gray-400">Oracle allowlist</h2>
+        <h2 className="text-center font-mono text-gray-400">Oracle: Allowlist</h2>
 
         {/* Form for Allow/Disallow */}
         <Form {...form}>
