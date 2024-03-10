@@ -21,7 +21,6 @@ This project is still in development, and new features will be added in the futu
 
 - Generate script based on user input
 - User select interval or on-demand
-- Create Acurast job (using above inputs)
 - Deployment of contract via frontend
 - Pop-up to send transaction fees to Processor (not needed for Acurast Level 2)
 -
@@ -29,7 +28,6 @@ This project is still in development, and new features will be added in the futu
 ## Links
 
 - [Video demo]()
-- [Vercel deployment]()
 
 ## Team
 
